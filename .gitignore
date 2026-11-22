@@ -1,0 +1,21 @@
+# Virtual environments & Python caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# IDE metadata
+.idea/
+.vscode/
+
+# Nexora runtime outputs (keep starter templates & sample CSV tracked)
+workflows/profiles/*.json
+data/exports/*.csv
+data/logs/*.json
+data/screenshots/*.png
+data/downloads/*
+data/nexora.db
+data/execution_history.csv
+!workflows/sample_workflows.json
+!data/sample_clients.csv

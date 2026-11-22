@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexora Operations &amp; Automation Demo Portal</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-alt: #273549;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      color: var(--primary);
+    }
+
+    header p {
+      margin: 0.2rem 0 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    main {
+      max-width: 1080px;
+      margin: 1.75rem auto;
+      padding: 0 1.25rem 3rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .banner {
+      background-color: rgba(245, 158, 11, 0.14);
+      border: 1px solid var(--warning);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .banner.hidden {
+      display: none;
+    }
+
+    .card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.4rem;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.6rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 0.95rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.05rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #082f49;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      color: #ffffff;
+    }
+
+    .btn-secondary {
+      background-color: var(--surface-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: #334155;
+    }
+
+    .status-box {
+      margin-top: 1rem;
+      padding: 0.75rem 0.95rem;
+      border-radius: 6px;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+
+    .status-box.ok {
+      border-color: var(--success);
+      color: #86efac;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.92rem;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background-color: var(--surface-alt);
+      color: var(--primary);
+    }
+
+    ul.link-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    ul.link-list a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    ul.link-list a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1 id="portal-heading">Nexora Operations Demo Portal</h1>
+      <p id="portal-subtitle">Offline deterministic sandbox for testing workflows, selectors, CSV batches, and exports</p>
+    </div>
+    <span id="session-badge" class="status-box ok">Environment: Offline Ready</span>
+  </header>
+
+  <main>
+    <!-- Conditional Notice Banner (supports skip_if_missing / if_element_exists testing) -->
+    <div id="promo-banner" class="banner" role="region" aria-label="System Notice">
+      <span><strong>Notice:</strong> Scheduled maintenance window starts Sunday at 23:00 UTC.</span>
+      <button type="button" id="close-banner-btn" class="btn-secondary">Dismiss Notice</button>
+    </div>
+
+    <div class="grid-2">
+      <!-- Client & Lead Intake Form -->
+      <section class="card" aria-labelledby="form-section-title">
+        <h2 id="form-section-title">Client Intake &amp; Registration</h2>
+        <form id="intake-form" novalidate>
+          <div class="form-group">
+            <label for="full-name">Full Name</label>
+            <input type="text" id="full-name" name="full_name" placeholder="e.g. Ada Lovelace" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email-address">Work Email</label>
+            <input type="email" id="email-address" name="email" placeholder="e.g. ada@analytical.io" required />
+          </div>
+
+          <div class="form-group">
+            <label for="department-select">Department</label>
+            <select id="department-select" name="department">
+              <option value="engineering">Engineering</option>
+              <option value="operations">Operations</option>
+              <option value="finance">Finance</option>
+              <option value="research">Research</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="notes-input">Reference Note</label>
+            <input type="text" id="notes-input" name="notes" placeholder="Optional onboarding note" />
+          </div>
+
+          <div class="btn-row">
+            <button type="submit" id="submit-btn" name="submit_record" class="btn-primary">Submit Record</button>
+            <button type="button" id="reset-form-btn" class="btn-secondary">Clear Form</button>
+          </div>
+        </form>
+
+        <div id="status-badge" class="status-box" aria-live="polite">
+          Ready for input.
+        </div>
+      </section>
+
+      <!-- Exports, Async Wait & Directory Links -->
+      <section class="card" aria-labelledby="tools-section-title">
+        <h2 id="tools-section-title">Reports, Async Checks &amp; Resources</h2>
+        <p style="color: var(--muted); font-size: 0.92rem; margin-top: 0;">
+          Trigger an instant CSV report download or test condition-based waits on asynchronous DOM updates.
+        </p>
+
+        <div class="btn-row">
+          <button type="button" id="download-report-btn" class="btn-primary">Download CSV Report</button>
+          <button type="button" id="load-async-btn" class="btn-secondary">Load Async Status</button>
+        </div>
+
+        <div id="async-container" style="margin-top: 0.9rem;">
+          <div id="async-result" class="status-box" style="display: none;">
+            Async Verification Complete: All worker nodes healthy.
+          </div>
+        </div>
+
+        <h3 style="font-size: 0.98rem; margin-top: 1.4rem; margin-bottom: 0.4rem;">Portal Directory</h3>
+        <ul id="resource-links" class="link-list">
+          <li><a href="#intake-form" title="Client Intake Form">Client Intake Form</a></li>
+          <li><a href="#records-table" title="Active Client Directory">Active Client Directory</a></li>
+          <li><a href="https://example.org/docs/nexora-guide" title="Nexora Automation Guide">Nexora Automation Guide</a></li>
+          <li><a href="https://example.org/reports/audit-summary" title="Quarterly Audit Summary">Quarterly Audit Summary</a></li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- Structured Extraction Table -->
+    <section class="card" aria-labelledby="table-section-title">
+      <h2 id="table-section-title">Registered Client Directory</h2>
+      <table id="records-table">
+        <thead>
+          <tr>
+            <th>Record ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="records-tbody">
+          <tr>
+            <td>NX-1001</td>
+            <td>Ada Lovelace</td>
+            <td>ada@analytical.io</td>
+            <td>Engineering</td>
+            <td>Verified</td>
+          </tr>
+          <tr>
+            <td>NX-1002</td>
+            <td>Grace Hopper</td>
+            <td>grace@compiler.org</td>
+            <td>Operations</td>
+            <td>Verified</td>
+          </tr>
+          <tr>
+            <td>NX-1003</td>
+            <td>Alan Turing</td>
+            <td>alan@bletchley.uk</td>
+            <td>Research</td>
+            <td>Verified</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer id="page-footer">
+    Nexora Browser Automation Framework &bull; Local Test Sandbox
+  </footer>
+
+  <script>
+    (function () {
+      const banner = document.getElementById("promo-banner");
+      const closeBannerBtn = document.getElementById("close-banner-btn");
+      if (closeBannerBtn && banner) {
+        closeBannerBtn.addEventListener("click", function () {
+          banner.remove();
+        });
+      }
+
+      const form = document.getElementById("intake-form");
+      const fullNameInput = document.getElementById("full-name");
+      const emailInput = document.getElementById("email-address");
+      const deptSelect = document.getElementById("department-select");
+      const notesInput = document.getElementById("notes-input");
+      const statusBadge = document.getElementById("status-badge");
+      const tbody = document.getElementById("records-tbody");
+      const resetBtn = document.getElementById("reset-form-btn");
+
+      let nextId = 1004;
+
+      if (resetBtn && form) {
+        resetBtn.addEventListener("click", function () {
+          form.reset();
+          statusBadge.className = "status-box";
+          statusBadge.textContent = "Form cleared.";
+        });
+      }
+
+      if (form) {
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const nameVal = (fullNameInput.value || "").trim();
+          const emailVal = (emailInput.value || "").trim();
+          const deptLabel = deptSelect.options[deptSelect.selectedIndex]?.text || deptSelect.value;
+
+          if (!nameVal || !emailVal) {
+            statusBadge.className = "status-box";
+            statusBadge.textContent = "Error: Full Name and Work Email are required.";
+            return;
+          }
+
+          const recordId = "NX-" + nextId++;
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td>" + recordId + "</td>" +
+            "<td>" + escapeHtml(nameVal) + "</td>" +
+            "<td>" + escapeHtml(emailVal) + "</td>" +
+            "<td>" + escapeHtml(deptLabel) + "</td>" +
+            "<td>Registered</td>";
+          tbody.appendChild(row);
+
+          statusBadge.className = "status-box ok";
+          statusBadge.textContent = "Registered " + recordId + ": " + nameVal + " (" + deptLabel + ")";
+
+          fullNameInput.value = "";
+          emailInput.value = "";
+          notesInput.value = "";
+        });
+      }
+
+      const downloadBtn = document.getElementById("download-report-btn");
+      if (downloadBtn) {
+        downloadBtn.addEventListener("click", function () {
+          const rows = [["Record ID", "Full Name", "Email", "Department", "Status"]];
+          document.querySelectorAll("#records-tbody tr").forEach(function (tr) {
+            const cols = Array.from(tr.querySelectorAll("td")).map(function (td) {
+              return '"' + (td.textContent || "").replace(/"/g, '""') + '"';
+            });
+            if (cols.length) {
+              rows.push(cols);
+            }
+          });
+
+          const csvContent = rows.map(function (r) { return r.join(","); }).join("\n");
+          const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "nexora_portal_report.csv");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      const loadAsyncBtn = document.getElementById("load-async-btn");
+      const asyncResult = document.getElementById("async-result");
+      if (loadAsyncBtn && asyncResult) {
+        loadAsyncBtn.addEventListener("click", function () {
+          asyncResult.style.display = "none";
+          setTimeout(function () {
+            asyncResult.style.display = "block";
+            asyncResult.className = "status-box ok";
+          }, 500);
+        });
+      }
+
+      function escapeHtml(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+    })();
+  </script>
+</body>
+</html>
